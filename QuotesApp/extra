@@ -1,0 +1,40 @@
+    try:
+        cursor.execute("""INSERT INTO Quotes_author(description,name,dob) values({},{},{})""",{str(author_des[:100]),str(author_name),str(+author_dob)})
+        db.commit()
+    except:
+        db.rollback()
+    sql = "SELECT LAST_INSERT_ID()"
+    author_id = 0
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        author_id = result[0]
+    except:
+        db.rollback()
+    insert_quote(author_id,quote,tag_list)
+
+
+def insert_quote(id,txt,tags):
+    try:
+        cursor.execute("""INSERT INTO Quotes_quote(quote_text,author_id) values(?,?)""",{ txt,id})
+        db.commit()
+    except:
+        db.rollback()
+    sql = "SELECT LAST_INSERT_ID()"
+    quote_id = 0
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        quote_id = result[0]
+    except:
+        db.rollback()
+    insert_tag(tags,quote_id)
+
+
+def insert_tag(tags,id):
+    try:
+        for tag in tags:
+            cursor.execute("""INSERT INTO Quotes_tag(tag_name,quote_id) values(?,?)""",{tag ,id})
+            db.commit()
+    except:
+        db.rollback()
